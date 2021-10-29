@@ -60,9 +60,14 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+	sudo openssl req -x509 -batch -new -newkey rsa:2048 -nodes -keyout /etc/ssl/certs/localhost.key -subj '/C=RU/ST=Moscow/L=Moscow/CN=localhost.com' -out /etc/ssl/certs/localhost.csr
+	sudo rm -rf /etc/apache2/sites-available/000-default.conf
+	sudo rm -rf /etc/apache2/sites-available/default-ssl.conf
 	sudo a2ensite default.conf
 	sudo a2ensite second.conf
 	sudo a2dissite 000-default.conf
-    sudo service apache2 restart
+	sudo a2enmod cgi
+	sudo a2enmod ssl
+	sudo service apache2 restart
   SHELL
 end
