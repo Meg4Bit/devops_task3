@@ -48,21 +48,18 @@ Vagrant.configure("2") do |config|
   #   vb.memory = "1024"
   # end
   #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo openssl req -x509 -batch -new -newkey rsa:2048 -nodes -keyout /etc/ssl/certs/localhost.key -subj '/C=RU/ST=Moscow/L=Moscow/CN=localhost.com' -out /etc/ssl/certs/localhost.csr
-  SHELL
 
   config.vm.provision :salt do |salt|
 
     salt.masterless = true
     salt.minion_config = "salt/minion"
 	salt.run_highstate = true
+	salt.bootstrap_script = "salt/bootstrap_salt.sh"
 
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    sudo openssl req -x509 -batch -new -newkey rsa:2048 -nodes -keyout /etc/ssl/certs/localhost.key -subj '/C=RU/ST=Moscow/L=Moscow/CN=localhost.com' -out /etc/ssl/certs/localhost.csr
 	sudo rm -rf /etc/apache2/sites-available/000-default.conf
 	sudo rm -rf /etc/apache2/sites-available/default-ssl.conf
 	sudo a2ensite default.conf
